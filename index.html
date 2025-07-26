@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Mainframe</title>
+    <title>Practical Submission Tracker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
@@ -19,7 +19,6 @@
             --submitted-bg: #00f2ea;
             --submitted-text: #0a0a14;
             --submitted-shadow: #00f2ea;
-            --error-color: #ff4d4d;
         }
 
         body {
@@ -27,307 +26,243 @@
             color: var(--text-color);
             font-family: 'Roboto', sans-serif;
             margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden; /* Prevents scrollbars */
-        }
-
-        /* --- Under Construction Overlay --- */
-        #construction-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-color);
-            background-image:
-                linear-gradient(rgba(0, 242, 234, 0.15) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 242, 234, 0.15) 1px, transparent 1px);
-            background-size: 40px 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            z-index: 1000;
-            transition: opacity 1.5s ease-out, transform 1.5s ease-out;
-            opacity: 1;
-        }
-
-        #construction-overlay.unlocked {
-            opacity: 0;
-            transform: scale(1.2);
-            pointer-events: none;
-        }
-
-        .lock-screen {
-            background: var(--widget-bg);
-            padding: 40px;
-            border-radius: 20px;
-            border: 1px solid var(--border-glow);
-            box-shadow: 0 0 30px var(--border-glow);
-            text-align: center;
-            max-width: 400px;
-        }
-
-        .lock-screen h1 {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--primary-color);
-            font-size: 2rem;
-            text-shadow: 0 0 10px var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .lock-screen p {
-            color: var(--text-color);
-            opacity: 0.8;
-            margin-bottom: 30px;
-        }
-
-        .password-form input {
-            background: transparent;
-            border: 1px solid var(--border-glow);
-            border-radius: 8px;
-            color: var(--primary-color);
-            padding: 15px;
-            width: calc(100% - 32px);
-            text-align: center;
-            font-size: 1.2rem;
-            font-family: 'Orbitron', sans-serif;
-            margin-bottom: 20px;
-        }
-
-        .password-form input:focus {
-            outline: none;
-            box-shadow: 0 0 15px var(--primary-color);
-        }
-
-        .password-form button {
-            background: var(--primary-color);
-            color: var(--bg-color);
-            border: none;
-            border-radius: 8px;
-            padding: 15px 30px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 1px;
-        }
-
-        .password-form button:hover {
-            box-shadow: 0 0 20px var(--primary-color);
-            transform: scale(1.05);
-        }
-
-        #error-message {
-            color: var(--error-color);
-            margin-top: 15px;
-            height: 20px;
-            font-weight: bold;
-            transition: opacity 0.3s;
-        }
-        
-        /* --- Main Tracker Content (Initially Hidden) --- */
-        #main-content {
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             height: 100vh;
-            box-sizing: border-box;
-            visibility: hidden; /* Hide until unlocked */
-            opacity: 0;
-            transition: opacity 1s ease-in 1s, visibility 1s ease-in 1s;
+            overflow: hidden; /* Prevents scrollbars */
+            background-image:
+                radial-gradient(circle at 10% 10%, rgba(0, 242, 234, 0.1) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 255, 0.1) 0%, transparent 30%);
         }
 
-        #main-content.visible {
-            visibility: visible;
-            opacity: 1;
+        /* Header Styling */
+        .header {
+            text-align: center;
+            margin-bottom: 30px; /* Reduced margin */
         }
 
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; color: var(--primary-color); margin: 0; text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--secondary-color); }
-        .header p { font-size: 0.9rem; opacity: 0.8; max-width: 600px; }
-        .tracker-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; max-width: 1300px; }
-        .subject-column { background-color: var(--widget-bg); border-radius: 15px; padding: 15px; border: 1px solid var(--border-glow); box-shadow: 0 0 20px rgba(26, 26, 46, 0.5); transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .subject-column:hover { transform: translateY(-5px); box-shadow: 0 0 25px var(--border-glow); }
-        .subject-column h2 { font-family: 'Orbitron', sans-serif; text-align: center; margin-top: 0; margin-bottom: 20px; color: var(--primary-color); font-size: 1.3rem; }
-        .practicals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .practical-btn { background: linear-gradient(145deg, #2a2a4a, #1a1a2e); color: var(--text-color); border: 1px solid var(--border-glow); border-radius: 8px; padding: 12px 5px; font-size: 0.9rem; cursor: pointer; text-align: center; transition: all 0.3s ease; position: relative; overflow: hidden; }
-        .practical-btn:hover { border-color: var(--primary-color); color: white; transform: scale(1.05); }
-        .practical-btn.submitted { background: var(--submitted-bg); color: var(--submitted-text); font-weight: bold; border: 1px solid var(--submitted-bg); box-shadow: 0 0 15px var(--submitted-shadow); }
-        .practical-btn.submitted::before { content: '✔'; margin-right: 5px; font-weight: bold; }
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem; /* Slightly smaller */
+            color: var(--primary-color);
+            margin: 0;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--secondary-color);
+        }
 
+        .header p {
+            font-size: 0.9rem; /* Slightly smaller */
+            color: var(--text-color);
+            opacity: 0.8;
+            max-width: 600px;
+        }
+
+        /* Main Container for Subjects */
+        .tracker-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusted minmax */
+            gap: 20px; /* Reduced gap */
+            width: 100%;
+            max-width: 1300px;
+        }
+
+        /* Subject Column Styling */
+        .subject-column {
+            background-color: var(--widget-bg);
+            border-radius: 15px;
+            padding: 15px; /* Reduced padding */
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 0 20px rgba(26, 26, 46, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .subject-column:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px var(--border-glow);
+        }
+
+        .subject-column h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px; /* Reduced margin */
+            color: var(--primary-color);
+            font-size: 1.3rem; /* Slightly smaller */
+        }
+
+        /* Practical Buttons Styling */
+        .practicals-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Changed to 2 columns */
+            gap: 10px; /* Reduced gap */
+        }
+
+        .practical-btn {
+            background: linear-gradient(145deg, #2a2a4a, #1a1a2e);
+            color: var(--text-color);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px; /* Slightly smaller radius */
+            padding: 12px 5px; /* Reduced padding */
+            font-size: 0.9rem; /* Reduced font size */
+            font-weight: 400;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .practical-btn:hover {
+            border-color: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* Submitted State Styling */
+        .practical-btn.submitted {
+            background: var(--submitted-bg);
+            color: var(--submitted-text);
+            font-weight: bold;
+            border: 1px solid var(--submitted-bg);
+            box-shadow: 0 0 15px var(--submitted-shadow);
+        }
+        
+        .practical-btn.submitted::before {
+            content: '✔';
+            margin-right: 5px; /* Adjusted margin */
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Under Construction Overlay -->
-    <div id="construction-overlay">
-        <div class="lock-screen">
-            <h1>SYSTEM OFFLINE</h1>
-            <p>Mainframe access required. Please authenticate.</p>
-            <form id="password-form" class="password-form">
-                <input type="password" id="password-input" placeholder="ACCESS CODE">
-                <button type="submit">AUTHENTICATE</button>
-            </form>
-            <p id="error-message"></p>
-        </div>
-    </div>
+    <header class="header">
+        <h1>Submission Tracker</h1>
+        <p>Click on a practical to mark it as submitted. Your progress is saved automatically in your browser.</p>
+    </header>
 
-    <!-- Main Content (The Tracker) -->
-    <div id="main-content">
-        <header class="header">
-            <h1>Submission Tracker</h1>
-            <p>Your progress is saved to your cloud account automatically.</p>
-        </header>
-
-        <main class="tracker-container" id="trackerContainer">
-            <!-- Subject columns will be generated by JavaScript -->
-        </main>
-    </div>
+    <main class="tracker-container" id="trackerContainer">
+        <!-- Subject columns will be generated by JavaScript -->
+    </main>
     
-    <script type="module">
-        // Import Firebase modules
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // --- PASSWORD & LOCK SCREEN LOGIC ---
-            const overlay = document.getElementById('construction-overlay');
-            const mainContent = document.getElementById('main-content');
-            const passwordForm = document.getElementById('password-form');
-            const passwordInput = document.getElementById('password-input');
-            const errorMessage = document.getElementById('error-message');
-            const CORRECT_PASSWORD = '1234'; // The access password
+            // --- CONFIGURATION ---
+            const subjects = ["M&A", "CN", "AAD", "Crypto", "IAM"];
+            const practicalsPerSubject = 10;
+            const container = document.getElementById('trackerContainer');
+            
+            // This object will hold the submission status, e.g., {'M&A-1': true}
+            let submissionStatus = {};
 
-            passwordForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                if (passwordInput.value === CORRECT_PASSWORD) {
-                    errorMessage.textContent = 'ACCESS GRANTED';
-                    errorMessage.style.color = 'var(--primary-color)';
-                    overlay.classList.add('unlocked');
-                    mainContent.classList.add('visible');
-                    // Initialize the tracker with Firebase once unlocked
-                    initializeTrackerWithFirebase();
-                } else {
-                    errorMessage.textContent = 'ACCESS DENIED';
-                    passwordInput.value = '';
-                }
-            });
+            // --- FUNCTIONS ---
 
-
-            // --- TRACKER LOGIC WITH FIREBASE ---
-            async function initializeTrackerWithFirebase() {
-                // Get Firebase config from global variables provided by the environment
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-
-                // Initialize Firebase App, Auth, and Firestore
-                const app = initializeApp(firebaseConfig);
-                const auth = getAuth(app);
-                const db = getFirestore(app);
-
-                // Authenticate the user to get a unique ID
-                try {
-                    const authToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-                    if (authToken) {
-                        await signInWithCustomToken(auth, authToken);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                } catch (error) {
-                    console.error("Firebase Authentication Error:", error);
-                    alert("Could not connect to the database. Please refresh.");
-                    return;
-                }
-                
-                const userId = auth.currentUser.uid;
-                if (!userId) {
-                    console.error("Could not get User ID after authentication.");
-                    return;
-                }
-
-                // Set up a reference to this user's specific document in Firestore
-                const docRef = doc(db, `artifacts/${appId}/users/${userId}/practicals`, "status");
-                
-                const subjects = ["M&A", "CN", "AAD", "Crypto", "IAM"];
-                const practicalsPerSubject = 10;
-                const container = document.getElementById('trackerContainer');
-                let submissionStatus = {}; // Local state of submissions
-
-                // Real-time listener: This function runs whenever data changes in the database
-                onSnapshot(docRef, (docSnap) => {
-                    if (docSnap.exists()) {
-                        submissionStatus = docSnap.data(); // Get data from Firestore
-                    } else {
-                        console.log("Creating new user profile in database.");
-                        submissionStatus = {}; // No data yet for new user
-                    }
-                    createTrackerUI(); // Re-render the UI with the latest data
-                }, (error) => {
-                    console.error("Firestore data listener error:", error);
-                });
-
-                // Function to save the current state to Firestore
-                async function saveStatus() {
-                    try {
-                        // setDoc with merge creates the document if it's missing, or updates it if it exists.
-                        await setDoc(docRef, submissionStatus, { merge: true });
-                    } catch (error) {
-                        console.error("Error saving to Firestore:", error);
-                    }
-                }
-
-                // Handles a click on a practical button
-                function handlePracticalClick(event) {
-                    const button = event.currentTarget;
-                    const id = `${button.dataset.subject}-${button.dataset.practical}`;
-                    submissionStatus[id] = !submissionStatus[id]; // Toggle status locally
-                    updateButtonUI(button, submissionStatus[id]); // Update UI immediately
-                    saveStatus(); // Save the new state to the database
-                }
-                
-                // Updates a single button's style based on its status
-                function updateButtonUI(button, isSubmitted) {
-                    const practical = button.dataset.practical;
-                    button.textContent = `Prac ${practical}`;
-                    if (isSubmitted) {
-                        button.classList.add('submitted');
-                    } else {
-                        button.classList.remove('submitted');
-                    }
-                }
-                
-                // Creates or re-creates the entire grid of practicals
-                function createTrackerUI() {
-                    container.innerHTML = '';
-                    subjects.forEach(subject => {
-                        const column = document.createElement('div');
-                        column.className = 'subject-column';
-                        const title = document.createElement('h2');
-                        title.textContent = subject;
-                        column.appendChild(title);
-                        const practicalsGrid = document.createElement('div');
-                        practicalsGrid.className = 'practicals-grid';
-
-                        for (let i = 1; i <= practicalsPerSubject; i++) {
-                            const button = document.createElement('button');
-                            button.className = 'practical-btn';
-                            button.dataset.subject = subject;
-                            button.dataset.practical = i;
-                            const id = `${subject}-${i}`;
-                            updateButtonUI(button, submissionStatus[id] || false);
-                            button.addEventListener('click', handlePracticalClick);
-                            practicalsGrid.appendChild(button);
-                        }
-                        column.appendChild(practicalsGrid);
-                        container.appendChild(column);
-                    });
+            /**
+             * Loads the submission status from the browser's local storage.
+             */
+            function loadStatus() {
+                const savedStatus = localStorage.getItem('practicalSubmissionStatus');
+                if (savedStatus) {
+                    submissionStatus = JSON.parse(savedStatus);
                 }
             }
+
+            /**
+             * Saves the current submission status to local storage.
+             */
+            function saveStatus() {
+                localStorage.setItem('practicalSubmissionStatus', JSON.stringify(submissionStatus));
+            }
+
+            /**
+             * Handles the click event on a practical button.
+             * It toggles the submission state and updates the UI.
+             * @param {Event} event - The click event object.
+             */
+            function handlePracticalClick(event) {
+                const button = event.currentTarget;
+                const subject = button.dataset.subject;
+                const practical = button.dataset.practical;
+                const id = `${subject}-${practical}`;
+
+                // Toggle the status
+                submissionStatus[id] = !submissionStatus[id];
+                
+                updateButtonUI(button, submissionStatus[id]);
+                saveStatus();
+            }
+
+            /**
+             * Updates a button's appearance based on its submission status.
+             * @param {HTMLElement} button - The button element to update.
+             * @param {boolean} isSubmitted - The submission status.
+             */
+            function updateButtonUI(button, isSubmitted) {
+                const practical = button.dataset.practical;
+                const textNode = document.createTextNode(` Pr. ${practical}`);
+                // Clear existing content except for the checkmark
+                while(button.firstChild && button.firstChild.nodeType !== Node.ELEMENT_NODE){
+                     button.removeChild(button.firstChild);
+                }
+                
+                if (isSubmitted) {
+                    button.classList.add('submitted');
+                } else {
+                    button.classList.remove('submitted');
+                }
+                // Re-add text content to ensure checkmark from CSS is first
+                button.appendChild(document.createTextNode(`Prac ${practical}`));
+            }
+            
+            /**
+             * Creates and populates the tracker UI with subjects and practicals.
+             */
+            function createTrackerUI() {
+                // Clear any existing content
+                container.innerHTML = '';
+
+                subjects.forEach(subject => {
+                    // Create a column for the subject
+                    const column = document.createElement('div');
+                    column.className = 'subject-column';
+                    
+                    // Create the subject title
+                    const title = document.createElement('h2');
+                    title.textContent = subject;
+                    column.appendChild(title);
+
+                    // Create a grid for the practical buttons
+                    const practicalsGrid = document.createElement('div');
+                    practicalsGrid.className = 'practicals-grid';
+
+                    // Create 10 practical buttons for the subject
+                    for (let i = 1; i <= practicalsPerSubject; i++) {
+                        const button = document.createElement('button');
+                        button.className = 'practical-btn';
+                        button.dataset.subject = subject;
+                        button.dataset.practical = i;
+                        
+                        const id = `${subject}-${i}`;
+                        updateButtonUI(button, submissionStatus[id] || false);
+
+                        button.addEventListener('click', handlePracticalClick);
+                        practicalsGrid.appendChild(button);
+                    }
+
+                    column.appendChild(practicalsGrid);
+                    container.appendChild(column);
+                });
+            }
+
+            // --- INITIALIZATION ---
+            
+            // 1. Load any saved data from previous sessions
+            loadStatus();
+
+            // 2. Build the user interface based on the data
+            createTrackerUI();
         });
     </script>
 
