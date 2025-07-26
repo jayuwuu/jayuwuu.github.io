@@ -1,104 +1,335 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<script src="https://kit.fontawesome.com/a14ae32021.js" crossorigin="anonymous"></script>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>This one is for my Bakudi</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Mainframe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        /* General Styling & Futuristic Theme */
+        :root {
+            --bg-color: #0a0a14;
+            --primary-color: #00f2ea;
+            --secondary-color: #ff00ff;
+            --widget-bg: #1a1a2e;
+            --text-color: #e0e0e0;
+            --border-glow: rgba(0, 242, 234, 0.5);
+            --submitted-bg: #00f2ea;
+            --submitted-text: #0a0a14;
+            --submitted-shadow: #00f2ea;
+            --error-color: #ff4d4d;
+        }
 
-<style type="text/css">
-@font-face {
-	font-family: digit;
-	src: url('digital-7_mono.ttf') format("truetype");
-}
-</style>
-<link href="css/default.css" type="text/css" rel="stylesheet">
-<script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript" src="js/garden.js"></script>
-<script type="text/javascript" src="js/functions.js"></script>
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden; /* Prevents scrollbars */
+        }
 
+        /* --- Under Construction Overlay --- */
+        #construction-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            background-image:
+                linear-gradient(rgba(0, 242, 234, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 234, 0.15) 1px, transparent 1px);
+            background-size: 40px 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+            transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+            opacity: 1;
+        }
+
+        #construction-overlay.unlocked {
+            opacity: 0;
+            transform: scale(1.2);
+            pointer-events: none;
+        }
+
+        .lock-screen {
+            background: var(--widget-bg);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 0 30px var(--border-glow);
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .lock-screen h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary-color);
+            font-size: 2rem;
+            text-shadow: 0 0 10px var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .lock-screen p {
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        .password-form input {
+            background: transparent;
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            color: var(--primary-color);
+            padding: 15px;
+            width: calc(100% - 32px);
+            text-align: center;
+            font-size: 1.2rem;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 20px;
+        }
+
+        .password-form input:focus {
+            outline: none;
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+
+        .password-form button {
+            background: var(--primary-color);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 8px;
+            padding: 15px 30px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .password-form button:hover {
+            box-shadow: 0 0 20px var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        #error-message {
+            color: var(--error-color);
+            margin-top: 15px;
+            height: 20px;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        
+        /* --- Main Tracker Content (Initially Hidden) --- */
+        #main-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            box-sizing: border-box;
+            visibility: hidden; /* Hide until unlocked */
+            opacity: 0;
+            transition: opacity 1s ease-in 1s, visibility 1s ease-in 1s;
+        }
+
+        #main-content.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; color: var(--primary-color); margin: 0; text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--secondary-color); }
+        .header p { font-size: 0.9rem; opacity: 0.8; max-width: 600px; }
+        .tracker-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; max-width: 1300px; }
+        .subject-column { background-color: var(--widget-bg); border-radius: 15px; padding: 15px; border: 1px solid var(--border-glow); box-shadow: 0 0 20px rgba(26, 26, 46, 0.5); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .subject-column:hover { transform: translateY(-5px); box-shadow: 0 0 25px var(--border-glow); }
+        .subject-column h2 { font-family: 'Orbitron', sans-serif; text-align: center; margin-top: 0; margin-bottom: 20px; color: var(--primary-color); font-size: 1.3rem; }
+        .practicals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .practical-btn { background: linear-gradient(145deg, #2a2a4a, #1a1a2e); color: var(--text-color); border: 1px solid var(--border-glow); border-radius: 8px; padding: 12px 5px; font-size: 0.9rem; cursor: pointer; text-align: center; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .practical-btn:hover { border-color: var(--primary-color); color: white; transform: scale(1.05); }
+        .practical-btn.submitted { background: var(--submitted-bg); color: var(--submitted-text); font-weight: bold; border: 1px solid var(--submitted-bg); box-shadow: 0 0 15px var(--submitted-shadow); }
+        .practical-btn.submitted::before { content: '✔'; margin-right: 5px; font-weight: bold; }
+
+    </style>
 </head>
-
 <body>
 
-<div id="mainDiv">
-	<div id="content">
-		<div id="code">
-			<span class="comments">/**</span><br />
-			<span class="space"/><span class="comments">*THE CODE OF LOVE</span><br />
-			<span class="space"/><span class="comments">*/</span><br />
-			Hey Bakudi !<br />
-			Do you remember the day we Confess?<br />
-			<span class="comments">// On instagram Monday. </span><br />
-			Since that day a spark begun;<br />
-			<span class="comments">// Your face Your Voice Your Words.</span><br />
-			Your everything got imprinted in my heart;<br />
-			As the time went on;<br />
-			The Bond grew stronger and stronger;<br />
-			Journey from Infatuation to Love;<br />
-			We have traveled a long way together;<br />
-			There have been fights ;<br />
-			<span class="comments">// And I'm sure there will be more.</span><br />
-			But our Bond will always grow back Stronger;<br />
-			<br>
-			<br>
-			All I want to say is:<br />
-			Baby, I will love you forever;<br />
-			<br>
-			<br>
-			Now If you want to hug me you can touch the heart below<br />
-			<br>
-			<span id="heartspan">
-			<a href="img.jpg"><i class="fas fa-heart" id="icon"></i></a>
-			</span>
-		</div>
-		<div id="loveHeart">
-			<canvas id="garden"></canvas>
-			<div id="words">
-				<div id="messages">
-					"મારી બકુડી" FOREVER
-					<div id="elapseClock"></div>
-				</div>
-				<div id="loveu">
-					I LOVE YOU SO MUCH<br/>
-					<div class="signature">- Jaimin</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+    <!-- Under Construction Overlay -->
+    <div id="construction-overlay">
+        <div class="lock-screen">
+            <h1>SYSTEM OFFLINE</h1>
+            <p>Mainframe access required. Please authenticate.</p>
+            <form id="password-form" class="password-form">
+                <input type="password" id="password-input" placeholder="ACCESS CODE">
+                <button type="submit">AUTHENTICATE</button>
+            </form>
+            <p id="error-message"></p>
+        </div>
+    </div>
 
-<script type="text/javascript">
-var offsetX = $("#loveHeart").width() / 2;
-var offsetY = $("#loveHeart").height() / 2 - 55;
-var together = new Date();
-together.setFullYear(2024, 8, 23);
-together.setHours(16);
-together.setMinutes(30);
-together.setSeconds(0);
-together.setMilliseconds(0);
+    <!-- Main Content (The Tracker) -->
+    <div id="main-content">
+        <header class="header">
+            <h1>Submission Tracker</h1>
+            <p>Your progress is saved to your cloud account automatically.</p>
+        </header>
 
-if (!document.createElement('canvas').getContext) {
-	var msg = document.createElement("div");
-	msg.id = "errorMsg";
-	msg.innerHTML = "Your browser doesn't support HTML5!<br/>Recommend use Chrome 14+/IE 9+/Firefox 7+/Safari 4+"; 
-	document.body.appendChild(msg);
-	$("#code").css("display", "none")
-	$("#copyright").css("position", "absolute");
-	$("#copyright").css("bottom", "10px");
-	document.execCommand("stop");
-} else {
-	setTimeout(function () {
-		startHeartAnimation();
-	}, 5000);
+        <main class="tracker-container" id="trackerContainer">
+            <!-- Subject columns will be generated by JavaScript -->
+        </main>
+    </div>
+    
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-	timeElapse(together);
-	setInterval(function () {
-		timeElapse(together);
-	}, 500);
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- PASSWORD & LOCK SCREEN LOGIC ---
+            const overlay = document.getElementById('construction-overlay');
+            const mainContent = document.getElementById('main-content');
+            const passwordForm = document.getElementById('password-form');
+            const passwordInput = document.getElementById('password-input');
+            const errorMessage = document.getElementById('error-message');
+            const CORRECT_PASSWORD = '1234'; // The access password
 
-	adjustCodePosition();
-	$("#code").typewriter();
-}
-</script>
+            passwordForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (passwordInput.value === CORRECT_PASSWORD) {
+                    errorMessage.textContent = 'ACCESS GRANTED';
+                    errorMessage.style.color = 'var(--primary-color)';
+                    overlay.classList.add('unlocked');
+                    mainContent.classList.add('visible');
+                    // Initialize the tracker with Firebase once unlocked
+                    initializeTrackerWithFirebase();
+                } else {
+                    errorMessage.textContent = 'ACCESS DENIED';
+                    passwordInput.value = '';
+                }
+            });
+
+
+            // --- TRACKER LOGIC WITH FIREBASE ---
+            async function initializeTrackerWithFirebase() {
+                // Get Firebase config from global variables provided by the environment
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+                // Initialize Firebase App, Auth, and Firestore
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+
+                // Authenticate the user to get a unique ID
+                try {
+                    const authToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                    if (authToken) {
+                        await signInWithCustomToken(auth, authToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Firebase Authentication Error:", error);
+                    alert("Could not connect to the database. Please refresh.");
+                    return;
+                }
+                
+                const userId = auth.currentUser.uid;
+                if (!userId) {
+                    console.error("Could not get User ID after authentication.");
+                    return;
+                }
+
+                // Set up a reference to this user's specific document in Firestore
+                const docRef = doc(db, `artifacts/${appId}/users/${userId}/practicals`, "status");
+                
+                const subjects = ["M&A", "CN", "AAD", "Crypto", "IAM"];
+                const practicalsPerSubject = 10;
+                const container = document.getElementById('trackerContainer');
+                let submissionStatus = {}; // Local state of submissions
+
+                // Real-time listener: This function runs whenever data changes in the database
+                onSnapshot(docRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        submissionStatus = docSnap.data(); // Get data from Firestore
+                    } else {
+                        console.log("Creating new user profile in database.");
+                        submissionStatus = {}; // No data yet for new user
+                    }
+                    createTrackerUI(); // Re-render the UI with the latest data
+                }, (error) => {
+                    console.error("Firestore data listener error:", error);
+                });
+
+                // Function to save the current state to Firestore
+                async function saveStatus() {
+                    try {
+                        // setDoc with merge creates the document if it's missing, or updates it if it exists.
+                        await setDoc(docRef, submissionStatus, { merge: true });
+                    } catch (error) {
+                        console.error("Error saving to Firestore:", error);
+                    }
+                }
+
+                // Handles a click on a practical button
+                function handlePracticalClick(event) {
+                    const button = event.currentTarget;
+                    const id = `${button.dataset.subject}-${button.dataset.practical}`;
+                    submissionStatus[id] = !submissionStatus[id]; // Toggle status locally
+                    updateButtonUI(button, submissionStatus[id]); // Update UI immediately
+                    saveStatus(); // Save the new state to the database
+                }
+                
+                // Updates a single button's style based on its status
+                function updateButtonUI(button, isSubmitted) {
+                    const practical = button.dataset.practical;
+                    button.textContent = `Prac ${practical}`;
+                    if (isSubmitted) {
+                        button.classList.add('submitted');
+                    } else {
+                        button.classList.remove('submitted');
+                    }
+                }
+                
+                // Creates or re-creates the entire grid of practicals
+                function createTrackerUI() {
+                    container.innerHTML = '';
+                    subjects.forEach(subject => {
+                        const column = document.createElement('div');
+                        column.className = 'subject-column';
+                        const title = document.createElement('h2');
+                        title.textContent = subject;
+                        column.appendChild(title);
+                        const practicalsGrid = document.createElement('div');
+                        practicalsGrid.className = 'practicals-grid';
+
+                        for (let i = 1; i <= practicalsPerSubject; i++) {
+                            const button = document.createElement('button');
+                            button.className = 'practical-btn';
+                            button.dataset.subject = subject;
+                            button.dataset.practical = i;
+                            const id = `${subject}-${i}`;
+                            updateButtonUI(button, submissionStatus[id] || false);
+                            button.addEventListener('click', handlePracticalClick);
+                            practicalsGrid.appendChild(button);
+                        }
+                        column.appendChild(practicalsGrid);
+                        container.appendChild(column);
+                    });
+                }
+            }
+        });
+    </script>
+
 </body>
 </html>
