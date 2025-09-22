@@ -1,270 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practical Submission Tracker</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
-    <style>
-        /* General Styling & Futuristic Theme */
-        :root {
-            --bg-color: #0a0a14;
-            --primary-color: #00f2ea;
-            --secondary-color: #ff00ff;
-            --widget-bg: #1a1a2e;
-            --text-color: #e0e0e0;
-            --border-glow: rgba(0, 242, 234, 0.5);
-            --submitted-bg: #00f2ea;
-            --submitted-text: #0a0a14;
-            --submitted-shadow: #00f2ea;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For Aayushi ❤️</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 1rem;
+      position: relative;
+    }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden; /* Prevents scrollbars */
-            background-image:
-                radial-gradient(circle at 10% 10%, rgba(0, 242, 234, 0.1) 0%, transparent 30%),
-                radial-gradient(circle at 90% 80%, rgba(255, 0, 255, 0.1) 0%, transparent 30%);
-        }
+    h1 {
+      font-size: clamp(1.6rem, 6vw, 2.3rem);
+      color: #fff;
+      margin: 0.5em 0;
+      text-shadow: 0 0 8px rgba(0,0,0,0.2);
+      animation: fadeIn 2s ease-in-out;
+    }
 
-        /* Header Styling */
-        .header {
-            text-align: center;
-            margin-bottom: 30px; /* Reduced margin */
-        }
+    .typing {
+      font-size: clamp(1rem, 4.5vw, 1.2rem);
+      color: #fff;
+      margin: 0.8em auto;
+      max-width: 90%;
+      white-space: normal;
+      overflow: hidden;
+      border-right: 2px solid #fff;
+      display: inline-block;
+      animation: blink 0.8s infinite;
+      min-height: 2rem;
+    }
 
-        .header h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.2rem; /* Slightly smaller */
-            color: var(--primary-color);
-            margin: 0;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--secondary-color);
-        }
+    button {
+      padding: 12px 24px;
+      font-size: clamp(0.9rem, 4vw, 1.1rem);
+      background: #ff2e63;
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      margin-top: 1em;
+      transition: all 0.3s ease;
+      animation: pulse 2s infinite;
+    }
 
-        .header p {
-            font-size: 0.9rem; /* Slightly smaller */
-            color: var(--text-color);
-            opacity: 0.8;
-            max-width: 600px;
-        }
+    button:hover {
+      transform: scale(1.05);
+      background: #e01e53;
+    }
 
-        /* Main Container for Subjects */
-        .tracker-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusted minmax */
-            gap: 20px; /* Reduced gap */
-            width: 100%;
-            max-width: 1300px;
-        }
+    .reveal {
+      display: none;
+      margin-top: 1.5em;
+      animation: slideUp 1.2s ease forwards;
+    }
 
-        /* Subject Column Styling */
-        .subject-column {
-            background-color: var(--widget-bg);
-            border-radius: 15px;
-            padding: 15px; /* Reduced padding */
-            border: 1px solid var(--border-glow);
-            box-shadow: 0 0 20px rgba(26, 26, 46, 0.5);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .subject-column:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 25px var(--border-glow);
-        }
+    .reveal h2 {
+      font-size: clamp(1.3rem, 5vw, 1.8rem);
+      color: #fff;
+      margin: 0.3em 0;
+      text-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
 
-        .subject-column h2 {
-            font-family: 'Orbitron', sans-serif;
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 20px; /* Reduced margin */
-            color: var(--primary-color);
-            font-size: 1.3rem; /* Slightly smaller */
-        }
+    .reveal img {
+      width: 100%;
+      max-width: 340px;
+      border-radius: 16px;
+      margin-top: 1em;
+      box-shadow: 0px 10px 25px rgba(0,0,0,0.3);
+      animation: zoomIn 1.5s ease;
+    }
 
-        /* Practical Buttons Styling */
-        .practicals-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* Changed to 2 columns */
-            gap: 10px; /* Reduced gap */
-        }
+    /* Floating hearts */
+    .heart {
+      position: absolute;
+      color: rgba(255,255,255,0.75);
+      animation: floatUp 6s linear infinite;
+      bottom: -10%;
+      pointer-events: none;
+    }
 
-        .practical-btn {
-            background: linear-gradient(145deg, #2a2a4a, #1a1a2e);
-            color: var(--text-color);
-            border: 1px solid var(--border-glow);
-            border-radius: 8px; /* Slightly smaller radius */
-            padding: 12px 5px; /* Reduced padding */
-            font-size: 0.9rem; /* Reduced font size */
-            font-weight: 400;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
 
-        .practical-btn:hover {
-            border-color: var(--primary-color);
-            color: white;
-            transform: scale(1.05);
-        }
+    @keyframes blink {
+      0%, 100% { border-color: transparent; }
+      50% { border-color: #fff; }
+    }
 
-        /* Submitted State Styling */
-        .practical-btn.submitted {
-            background: var(--submitted-bg);
-            color: var(--submitted-text);
-            font-weight: bold;
-            border: 1px solid var(--submitted-bg);
-            box-shadow: 0 0 15px var(--submitted-shadow);
-        }
-        
-        .practical-btn.submitted::before {
-            content: '✔';
-            margin-right: 5px; /* Adjusted margin */
-            font-weight: bold;
-        }
-    </style>
+    @keyframes pulse {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(50px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+  </style>
 </head>
 <body>
+  <h1>Happy 1st Anniversary 💖</h1>
+  <div class="typing" id="typingText"></div>
+  <button id="revealBtn" onclick="showReveal()">Tap to Reveal 🎁</button>
 
-    <header class="header">
-        <h1>Submission Tracker</h1>
-        <p>Click on a practical to mark it as submitted. Your progress is saved automatically in your browser.</p>
-    </header>
+  <div class="reveal" id="revealBox">
+    <h2>We’re going to... ✨</h2>
+    <h2 style="color:#ffe600; font-size:clamp(1.6rem,6vw,2.3rem);">The Messy Door ☕</h2>
+    <img src="https://lh3.googleusercontent.com/p/AF1QipNAnPZp2Yg2NIP3yjq-xcLjd91cx8XhErZVJ146=s1360-w1360-h1020-rw" alt="The Messy Door Cafe">
+  </div>
 
-    <main class="tracker-container" id="trackerContainer">
-        <!-- Subject columns will be generated by JavaScript -->
-    </main>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- CONFIGURATION ---
-            const subjects = ["M&A", "CN", "AAD", "Crypto", "IAM"];
-            const practicalsPerSubject = 10;
-            const container = document.getElementById('trackerContainer');
-            
-            // This object will hold the submission status, e.g., {'M&A-1': true}
-            let submissionStatus = {};
+  <script>
+    // Typing effect for message
+    const message = "Aayushi ❤️ Thank you for being with me, supporting me, and making my world so beautiful.";
+    let i = 0;
+    function typeWriter() {
+      if (i < message.length) {
+        document.getElementById("typingText").textContent += message.charAt(i);
+        i++;
+        setTimeout(typeWriter, 60);
+      }
+    }
+    typeWriter();
 
-            // --- FUNCTIONS ---
+    // Reveal section
+    function showReveal() {
+      document.getElementById("revealBox").style.display = "block";
+      document.getElementById("revealBtn").style.display = "none"; // hide button
+    }
 
-            /**
-             * Loads the submission status from the browser's local storage.
-             */
-            function loadStatus() {
-                const savedStatus = localStorage.getItem('practicalSubmissionStatus');
-                if (savedStatus) {
-                    submissionStatus = JSON.parse(savedStatus);
-                }
-            }
-
-            /**
-             * Saves the current submission status to local storage.
-             */
-            function saveStatus() {
-                localStorage.setItem('practicalSubmissionStatus', JSON.stringify(submissionStatus));
-            }
-
-            /**
-             * Handles the click event on a practical button.
-             * It toggles the submission state and updates the UI.
-             * @param {Event} event - The click event object.
-             */
-            function handlePracticalClick(event) {
-                const button = event.currentTarget;
-                const subject = button.dataset.subject;
-                const practical = button.dataset.practical;
-                const id = `${subject}-${practical}`;
-
-                // Toggle the status
-                submissionStatus[id] = !submissionStatus[id];
-                
-                updateButtonUI(button, submissionStatus[id]);
-                saveStatus();
-            }
-
-            /**
-             * Updates a button's appearance based on its submission status.
-             * @param {HTMLElement} button - The button element to update.
-             * @param {boolean} isSubmitted - The submission status.
-             */
-            function updateButtonUI(button, isSubmitted) {
-                const practical = button.dataset.practical;
-                const textNode = document.createTextNode(` Pr. ${practical}`);
-                // Clear existing content except for the checkmark
-                while(button.firstChild && button.firstChild.nodeType !== Node.ELEMENT_NODE){
-                     button.removeChild(button.firstChild);
-                }
-                
-                if (isSubmitted) {
-                    button.classList.add('submitted');
-                } else {
-                    button.classList.remove('submitted');
-                }
-                // Re-add text content to ensure checkmark from CSS is first
-                button.appendChild(document.createTextNode(`Prac ${practical}`));
-            }
-            
-            /**
-             * Creates and populates the tracker UI with subjects and practicals.
-             */
-            function createTrackerUI() {
-                // Clear any existing content
-                container.innerHTML = '';
-
-                subjects.forEach(subject => {
-                    // Create a column for the subject
-                    const column = document.createElement('div');
-                    column.className = 'subject-column';
-                    
-                    // Create the subject title
-                    const title = document.createElement('h2');
-                    title.textContent = subject;
-                    column.appendChild(title);
-
-                    // Create a grid for the practical buttons
-                    const practicalsGrid = document.createElement('div');
-                    practicalsGrid.className = 'practicals-grid';
-
-                    // Create 10 practical buttons for the subject
-                    for (let i = 1; i <= practicalsPerSubject; i++) {
-                        const button = document.createElement('button');
-                        button.className = 'practical-btn';
-                        button.dataset.subject = subject;
-                        button.dataset.practical = i;
-                        
-                        const id = `${subject}-${i}`;
-                        updateButtonUI(button, submissionStatus[id] || false);
-
-                        button.addEventListener('click', handlePracticalClick);
-                        practicalsGrid.appendChild(button);
-                    }
-
-                    column.appendChild(practicalsGrid);
-                    container.appendChild(column);
-                });
-            }
-
-            // --- INITIALIZATION ---
-            
-            // 1. Load any saved data from previous sessions
-            loadStatus();
-
-            // 2. Build the user interface based on the data
-            createTrackerUI();
-        });
-    </script>
-
+    // Floating hearts generator
+    setInterval(() => {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.style.left = Math.random() * 90 + "vw";
+      heart.style.fontSize = (Math.random() * 1.5 + 1) + "rem";
+      heart.innerHTML = "❤";
+      document.body.appendChild(heart);
+      setTimeout(() => { heart.remove(); }, 6000);
+    }, 900);
+  </script>
 </body>
 </html>
